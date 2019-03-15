@@ -22,14 +22,6 @@ var ErrHandlerNil = errors.New("handler can't be nil")
 var ErrMatcherNil = errors.New("matcher can't be nil")
 var ErrTimedOut = errors.New("cannot run handle: timeout")
 
-type DuplicateHandleError struct {
-	HandlerType eh.EventHandlerType
-}
-
-func (e *DuplicateHandleError) Error() string {
-	return fmt.Sprintf("multiple registrations for %s", e.HandlerType)
-}
-
 type TopicProducer func(event eh.Event) string
 
 type TopicsConsumer func(event eh.EventHandler) []string
@@ -176,9 +168,7 @@ func (b *EventBus) subscription(m eh.EventMatcher, h eh.EventHandler, observer b
 	b.registeredMu.Lock()
 	if _, ok := b.registered[hType]; ok {
 		b.registeredMu.Unlock()
-		return errors.WithStack(&DuplicateHandleError{
-			HandlerType: hType,
-		})
+		return errors.Errorf("multiple registrations for %s", hType)
 	} else {
 		b.registered[hType] = none{}
 		b.registeredMu.Unlock()
