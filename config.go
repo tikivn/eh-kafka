@@ -1,7 +1,5 @@
 package kafka
 
-package eventbus
-
 import (
 	"time"
 )

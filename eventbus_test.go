@@ -12,7 +12,7 @@ import (
 	eh "github.com/looplab/eventhorizon"
 	"github.com/looplab/eventhorizon/eventbus"
 	"github.com/rcrowley/go-metrics"
-	kafka "github.com/giautm/eh-kafka"
+	kfbus "github.com/giautm/eh-kafka"
 	"go.uber.org/goleak"
 )
 
