@@ -30,15 +30,6 @@ func (e *DuplicateHandleError) Error() string {
 	return fmt.Sprintf("multiple registrations for %s", e.HandlerType)
 }
 
-type PublishEventError struct {
-	Event eh.Event
-	Err   error
-}
-
-func (e *PublishEventError) Error() string {
-	return fmt.Sprintf("could not publish event: %v", e.Err.Error())
-}
-
 type TopicProducer func(event eh.Event) string
 
 type TopicsConsumer func(event eh.EventHandler) []string
@@ -146,10 +137,8 @@ func (b *EventBus) PublishEvent(ctx context.Context, event eh.Event) error {
 	key := ([]byte)(event.AggregateID().String())
 	_, _, err = b.producer.SendMessage(ctx, topic, key, data)
 	if err != nil {
-		return errors.WithStack(&PublishEventError{
-			Event: event,
-			Err:   err,
-		})
+		return errors.Wrapf(err,
+			"could not publish event (%s) (%s)", event, ctx)
 	}
 
 	return nil
