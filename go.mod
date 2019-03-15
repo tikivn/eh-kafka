@@ -1,6 +1,7 @@
 module github.com/giautm/eh-kafka
 
 require (
+	github.com/DataDog/zstd v1.3.5 // indirect
 	github.com/Shopify/sarama v1.20.1
 	github.com/Shopify/toxiproxy v2.1.3+incompatible // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -12,6 +13,7 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/google/uuid v1.1.1
+	github.com/looplab/eventhorizon v0.5.0
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a
