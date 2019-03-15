@@ -169,10 +169,9 @@ func (b *EventBus) subscription(m eh.EventMatcher, h eh.EventHandler, observer b
 	if _, ok := b.registered[hType]; ok {
 		b.registeredMu.Unlock()
 		return errors.Errorf("multiple registrations for %s", hType)
-	} else {
-		b.registered[hType] = none{}
-		b.registeredMu.Unlock()
 	}
+	b.registered[hType] = none{}
+	b.registeredMu.Unlock()
 
 	groupID := string(hType)
 	if observer { // Generate unique ID for each observer.
