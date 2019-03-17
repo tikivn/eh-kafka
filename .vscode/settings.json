@@ -1,0 +1,5 @@
+{
+  "go.testEnvVars": {
+    "KAFKA_BROKERS": "localhost:9092",
+  }
+}

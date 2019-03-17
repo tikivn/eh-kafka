@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/Shopify/sarama"
@@ -77,10 +78,11 @@ func (p *producer) Close() error {
 }
 
 type consumer struct {
-	ctx     context.Context
-	group   sarama.ConsumerGroup
-	topics  []string
-	started chan none
+	ctx         context.Context
+	group       sarama.ConsumerGroup
+	topics      []string
+	started     chan none
+	startedOnce sync.Once
 }
 
 func NewConsumer(ctx context.Context, group sarama.ConsumerGroup, topics []string) (KafkaConsumer, error) {
@@ -96,7 +98,9 @@ func (c *consumer) Receive(ctx context.Context, f HandlerFunc) error {
 	handler := &consumerGroupHandler{
 		handler: f,
 		started: func() {
-			close(c.started)
+			c.startedOnce.Do(func() {
+				close(c.started)
+			})
 		},
 	}
 
