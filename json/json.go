@@ -29,14 +29,18 @@ func (Encoder) Decode(rawData []byte) (eh.Event, context.Context, error) {
 
 	// Create an event of the correct type.
 	if data, err := eh.CreateEventData(e.EventType); err == nil {
-		// Manually decode the raw JSON event.
-		if err := json.Unmarshal(e.RawData, data); err != nil {
-			return nil, nil, errors.Wrap(err, "could not unmarshal event data")
+		if data != nil {
+			// Manually decode the raw JSON event.
+			if err := json.Unmarshal(e.RawData, data); err != nil {
+				return nil, nil, errors.Wrap(err, "could not unmarshal event data")
+			}
 		}
 
 		// Set concrete event and zero out the decoded event.
 		e.data = data
 		e.RawData = nil
+	} else {
+		return nil, nil, errors.Wrap(err, "could not unmarshal event data")
 	}
 
 	event := event{evtJSON: e}
