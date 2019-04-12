@@ -7,12 +7,11 @@ import (
 	"testing"
 	"time"
 
+	kfbus "github.com/giautm/eh-kafka"
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/google/uuid"
-	eh "github.com/looplab/eventhorizon"
 	"github.com/looplab/eventhorizon/eventbus"
 	"github.com/rcrowley/go-metrics"
-	kfbus "github.com/giautm/eh-kafka"
 	"go.uber.org/goleak"
 )
 
@@ -37,8 +36,8 @@ func TestEventBus(t *testing.T) {
 	bus1, err := kfbus.NewEventBus(
 		ctx,
 		brokers,
-		func(eh.Event) string { return topic.String() },
-		func(eh.EventHandler) []string { return []string{topic.String()} },
+		kfbus.DefaultTopicProducer(topic.String()),
+		kfbus.DefaultTopicsConsumer(topic.String()),
 		kfbus.WithTimeout(timeout),
 	)
 	if err != nil {
@@ -50,8 +49,8 @@ func TestEventBus(t *testing.T) {
 	bus2, err := kfbus.NewEventBus(
 		ctx,
 		brokers,
-		func(eh.Event) string { return topic.String() },
-		func(eh.EventHandler) []string { return []string{topic.String()} },
+		kfbus.DefaultTopicProducer(topic.String()),
+		kfbus.DefaultTopicsConsumer(topic.String()),
 		kfbus.WithTimeout(timeout),
 	)
 	if err != nil {

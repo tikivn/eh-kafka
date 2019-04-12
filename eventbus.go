@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	eh "github.com/looplab/eventhorizon"
 	"github.com/pkg/errors"
+
 	"github.com/giautm/eh-kafka/json"
 )
 
@@ -22,9 +23,22 @@ var ErrHandlerNil = errors.New("handler can't be nil")
 var ErrMatcherNil = errors.New("matcher can't be nil")
 var ErrTimedOut = errors.New("cannot run handle: timeout")
 
-type TopicProducer func(event eh.Event) string
+type TopicProducer func(event eh.Event) (topic string, key string)
 
 type TopicsConsumer func(event eh.EventHandler) []string
+
+func DefaultTopicProducer(topic string) TopicProducer {
+	return func(event eh.Event) (string, string) {
+		return topic, event.AggregateID().String()
+	}
+}
+
+func DefaultTopicsConsumer(topic string) TopicsConsumer {
+	topics := []string{topic}
+	return func(event eh.EventHandler) []string {
+		return topics
+	}
+}
 
 // EventBus is an event bus that notifies registered EventHandlers of
 // published events. It will use the SimpleEventHandlingStrategy by default.
@@ -125,9 +139,8 @@ func (b *EventBus) PublishEvent(ctx context.Context, event eh.Event) error {
 		return err
 	}
 
-	topic := b.producerTopicFunc(event)
-	key := ([]byte)(event.AggregateID().String())
-	_, _, err = b.producer.SendMessage(ctx, topic, key, data)
+	topic, key := b.producerTopicFunc(event)
+	_, _, err = b.producer.SendMessage(ctx, topic, ([]byte)(key), data)
 	if err != nil {
 		return errors.Wrapf(err,
 			"could not publish event (%s) (%s)", event, ctx)
