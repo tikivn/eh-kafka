@@ -21,6 +21,9 @@ func NewConfig() *sarama.Config {
 	cfg.Producer.Flush.MaxMessages = 1
 	cfg.Producer.Return.Successes = true
 
+	cfg.Producer.Retry.Max = 10
+	cfg.Producer.Retry.Backoff = time.Second
+
 	return cfg
 }
 
