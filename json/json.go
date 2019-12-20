@@ -24,7 +24,7 @@ func (Encoder) String() string {
 func (Encoder) Decode(rawData []byte) (eh.Event, context.Context, error) {
 	var e evtJSON
 	if err := json.Unmarshal(rawData, &e); err != nil {
-		return nil, nil, errors.Wrap(err, "could not unmarshal event")
+		return nil, nil, errors.Wrap(err, string(rawData)+" could not unmarshal event")
 	}
 
 	// Create an event of the correct type.
@@ -32,7 +32,7 @@ func (Encoder) Decode(rawData []byte) (eh.Event, context.Context, error) {
 		if data != nil {
 			// Manually decode the raw JSON event.
 			if err := json.Unmarshal(e.RawData, data); err != nil {
-				return nil, nil, errors.Wrap(err, "could not unmarshal event data")
+				return nil, nil, errors.Wrap(err, string(rawData)+" could not unmarshal event data")
 			}
 		}
 
@@ -40,7 +40,7 @@ func (Encoder) Decode(rawData []byte) (eh.Event, context.Context, error) {
 		e.data = data
 		e.RawData = nil
 	} else {
-		return nil, nil, errors.Wrap(err, "could not unmarshal event data")
+		return nil, nil, errors.Wrap(err, string(rawData)+" could not unmarshal event data")
 	}
 
 	event := event{evtJSON: e}
