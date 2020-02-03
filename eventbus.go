@@ -137,7 +137,7 @@ func (b *EventBus) Close() (err error) {
 func (b *EventBus) PublishEvent(ctx context.Context, event eh.Event) error {
 	rand.Seed(time.Now().UnixNano())
 	randomI := rand.Intn(10)
-	time.Sleep(randomI * time.Second)
+	time.Sleep(time.Duration(randomI) * time.Second)
 	data, err := b.encoder.Encode(ctx, event)
 	if err != nil {
 		return err
