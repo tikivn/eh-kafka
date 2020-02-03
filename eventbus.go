@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -134,7 +135,8 @@ func (b *EventBus) Close() (err error) {
 
 // PublishEvent publishes an event to all handlers capable of handling it.
 func (b *EventBus) PublishEvent(ctx context.Context, event eh.Event) error {
-	time.Sleep(3 * time.Second)
+	rand.Seed(time.Now().UnixNano())
+	time.Sleep(rand.Intn(10) * time.Second)
 	data, err := b.encoder.Encode(ctx, event)
 	if err != nil {
 		return err
