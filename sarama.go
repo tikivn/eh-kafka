@@ -24,6 +24,18 @@ func NewConfig() *sarama.Config {
 	cfg.Producer.Retry.Max = 10
 	cfg.Producer.Retry.Backoff = time.Second
 
+	cfg.Producer.RequiredAcks = sarama.WaitForAll
+
+	return cfg
+}
+
+func NewConfigWithBatchProducer() *sarama.Config {
+	cfg := NewConfig()
+
+	cfg.Producer.Flush.Messages = 1000
+	cfg.Producer.Flush.MaxMessages = 10000
+	cfg.Producer.Flush.Frequency = 100 * time.Millisecond
+
 	return cfg
 }
 

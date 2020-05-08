@@ -74,6 +74,17 @@ func NewEventBus(
 	return NewEventBusWithConfig(ctx, client, producerTopicFunc, consumerTopicsFunc, opts...)
 }
 
+func NewEventBusWithBatchProducer(
+	ctx context.Context,
+	brokers []string,
+	producerTopicFunc TopicProducer,
+	consumerTopicsFunc TopicsConsumer,
+	opts ...Option,
+) (*EventBus, error) {
+	client := NewClientWithConfig(brokers, NewConfigWithBatchProducer())
+	return NewEventBusWithConfig(ctx, client, producerTopicFunc, consumerTopicsFunc, opts...)
+}
+
 // NewEventBus creates a EventBus.
 func NewEventBusWithConfig(
 	ctx context.Context,
