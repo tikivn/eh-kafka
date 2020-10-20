@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	kfbus "github.com/giautm/eh-kafka"
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/google/uuid"
 	"github.com/looplab/eventhorizon/eventbus"
 	"github.com/rcrowley/go-metrics"
+	kfbus "github.com/tikivn/eh-kafka"
 	"go.uber.org/goleak"
 )
 

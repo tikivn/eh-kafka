@@ -10,7 +10,7 @@ import (
 	eh "github.com/looplab/eventhorizon"
 	"github.com/pkg/errors"
 
-	"github.com/giautm/eh-kafka/json"
+	"github.com/tikivn/eh-kafka/json"
 )
 
 type KeyValueLogger interface {
