@@ -1,4 +1,4 @@
-module github.com/giautm/eh-kafka
+module github.com/tikivn/eh-kafka
 
 require (
 	github.com/DataDog/zstd v1.3.5 // indirect
