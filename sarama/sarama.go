@@ -1,4 +1,4 @@
-package kafka
+package sarama
 
 import (
 	"context"
@@ -6,9 +6,10 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
+	kafka "github.com/tikivn/eh-kafka"
 )
 
-func NewClient(brokers []string) KafkaClient {
+func NewClient(brokers []string) kafka.KafkaClient {
 	return NewClientWithConfig(brokers, NewConfig())
 }
 
@@ -44,14 +45,14 @@ type kafkaClient struct {
 	config  *sarama.Config
 }
 
-func NewClientWithConfig(brokers []string, cfg *sarama.Config) KafkaClient {
+func NewClientWithConfig(brokers []string, cfg *sarama.Config) kafka.KafkaClient {
 	return &kafkaClient{
 		brokers: brokers,
 		config:  cfg,
 	}
 }
 
-func (c *kafkaClient) NewProducer() (KafkaProducer, error) {
+func (c *kafkaClient) NewProducer() (kafka.KafkaProducer, error) {
 	p, err := sarama.NewSyncProducer(c.brokers, c.config)
 	if err != nil {
 		return nil, err
@@ -60,7 +61,7 @@ func (c *kafkaClient) NewProducer() (KafkaProducer, error) {
 	return NewSyncProducer(p)
 }
 
-func (c *kafkaClient) NewConsumer(ctx context.Context, id string, topics []string) (KafkaConsumer, error) {
+func (c *kafkaClient) NewConsumer(ctx context.Context, id string, topics []string) (kafka.KafkaConsumer, error) {
 	group, err := sarama.NewConsumerGroup(c.brokers, id, c.config)
 	if err != nil {
 		return nil, err
@@ -73,7 +74,7 @@ type producer struct {
 	producer sarama.SyncProducer
 }
 
-func NewSyncProducer(p sarama.SyncProducer) (KafkaProducer, error) {
+func NewSyncProducer(p sarama.SyncProducer) (*producer, error) {
 	return &producer{
 		producer: p,
 	}, nil
@@ -100,7 +101,7 @@ type consumer struct {
 	startedOnce sync.Once
 }
 
-func NewConsumer(ctx context.Context, group sarama.ConsumerGroup, topics []string) (KafkaConsumer, error) {
+func NewConsumer(ctx context.Context, group sarama.ConsumerGroup, topics []string) (kafka.KafkaConsumer, error) {
 	return &consumer{
 		ctx:     ctx,
 		group:   group,
@@ -109,7 +110,7 @@ func NewConsumer(ctx context.Context, group sarama.ConsumerGroup, topics []strin
 	}, nil
 }
 
-func (c *consumer) Receive(ctx context.Context, f HandlerFunc) error {
+func (c *consumer) Receive(ctx context.Context, f kafka.HandlerFunc) error {
 	handler := &consumerGroupHandler{
 		handler: f,
 		started: func() {
@@ -129,7 +130,7 @@ func (c *consumer) Receive(ctx context.Context, f HandlerFunc) error {
 func (c *consumer) Wait(timeout time.Duration) error {
 	select {
 	case <-time.After(timeout):
-		return ErrTimedOut
+		return kafka.ErrTimedOut
 	case <-c.ctx.Done():
 	case <-c.started:
 	}
@@ -146,7 +147,7 @@ func (c *consumer) Close() error {
 }
 
 type consumerGroupHandler struct {
-	handler HandlerFunc
+	handler kafka.HandlerFunc
 	started func()
 }
 
@@ -193,3 +194,5 @@ func (m *msgWrap) Key() []byte {
 func (m *msgWrap) Value() []byte {
 	return m.ConsumerMessage.Value
 }
+
+type none struct{}

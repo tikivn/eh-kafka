@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tikivn/eh-kafka/sarama"
+
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/google/uuid"
 	"github.com/looplab/eventhorizon/eventbus"
@@ -33,9 +35,10 @@ func TestEventBus(t *testing.T) {
 
 	ctx := context.Background()
 
+	client := sarama.NewClient(brokers)
 	bus1, err := kfbus.NewEventBus(
 		ctx,
-		brokers,
+		client,
 		kfbus.DefaultTopicProducer(topic.String()),
 		kfbus.DefaultTopicsConsumer(topic.String()),
 		kfbus.WithTimeout(timeout),
@@ -48,7 +51,7 @@ func TestEventBus(t *testing.T) {
 
 	bus2, err := kfbus.NewEventBus(
 		ctx,
-		brokers,
+		client,
 		kfbus.DefaultTopicProducer(topic.String()),
 		kfbus.DefaultTopicsConsumer(topic.String()),
 		kfbus.WithTimeout(timeout),

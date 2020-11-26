@@ -4,7 +4,7 @@ require (
 	github.com/DataDog/zstd v1.4.5 // indirect
 	github.com/Shopify/sarama v1.20.1
 	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/confluentinc/confluent-kafka-go v1.5.2 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
@@ -18,6 +18,8 @@ require (
 	github.com/pierrec/lz4 v2.5.2+incompatible // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a
+	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.6.1 // indirect
 	go.uber.org/goleak v0.10.0
+	gopkg.in/confluentinc/confluent-kafka-go.v1 v1.5.2
 )

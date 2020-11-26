@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	eh "github.com/looplab/eventhorizon"
 	"github.com/pkg/errors"
-
 	"github.com/tikivn/eh-kafka/json"
 )
 
@@ -62,6 +61,7 @@ type EventBus struct {
 	closeOnce sync.Once
 }
 
+/*
 // NewEventBus creates a EventBus.
 func NewEventBus(
 	ctx context.Context,
@@ -70,7 +70,7 @@ func NewEventBus(
 	consumerTopicsFunc TopicsConsumer,
 	opts ...Option,
 ) (*EventBus, error) {
-	client := NewClient(brokers)
+	client := sarama.NewClient(brokers)
 	return NewEventBusWithConfig(ctx, client, producerTopicFunc, consumerTopicsFunc, opts...)
 }
 
@@ -81,12 +81,13 @@ func NewEventBusWithBatchProducer(
 	consumerTopicsFunc TopicsConsumer,
 	opts ...Option,
 ) (*EventBus, error) {
-	client := NewClientWithConfig(brokers, NewConfigWithBatchProducer())
+	client := sarama.NewClientWithConfig(brokers, sarama.NewConfigWithBatchProducer())
 	return NewEventBusWithConfig(ctx, client, producerTopicFunc, consumerTopicsFunc, opts...)
 }
+*/
 
 // NewEventBus creates a EventBus.
-func NewEventBusWithConfig(
+func NewEventBus(
 	ctx context.Context,
 	client KafkaClient,
 	producerTopicFunc TopicProducer,
