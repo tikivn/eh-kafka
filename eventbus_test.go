@@ -78,9 +78,11 @@ func TestBatchProducerEventBus(t *testing.T) {
 
 	ctx := context.Background()
 
+	client := sarama.NewClient(brokers)
+
 	bus1, err := kfbus.NewEventBus(
 		ctx,
-		brokers,
+		client,
 		kfbus.DefaultTopicProducer(topic.String()),
 		kfbus.DefaultTopicsConsumer(topic.String()),
 		kfbus.WithTimeout(timeout),
@@ -91,9 +93,12 @@ func TestBatchProducerEventBus(t *testing.T) {
 	bus1.SetWaitConsumer(true)
 	defer bus1.Close()
 
-	bus2, err := kfbus.NewEventBusWithBatchProducer(
+	batchConfig := sarama.NewConfigWithBatchProducer()
+	batchClient := sarama.NewClientWithConfig(brokers, batchConfig)
+
+	bus2, err := kfbus.NewEventBus(
 		ctx,
-		brokers,
+		batchClient,
 		kfbus.DefaultTopicProducer(topic.String()),
 		kfbus.DefaultTopicsConsumer(topic.String()),
 		kfbus.WithTimeout(timeout),
