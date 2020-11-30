@@ -2,6 +2,7 @@ package confluent
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	kafka2 "github.com/tikivn/eh-kafka"
@@ -9,7 +10,8 @@ import (
 )
 
 type confluentKafkaClient struct {
-	cfg *kafka.ConfigMap
+	cfg     *kafka.ConfigMap
+	brokers []string
 }
 
 func (c confluentKafkaClient) NewProducer() (kafka2.KafkaProducer, error) {
@@ -19,13 +21,17 @@ func (c confluentKafkaClient) NewProducer() (kafka2.KafkaProducer, error) {
 func (c confluentKafkaClient) NewConsumer(ctx context.Context, groupId string, topics []string) (kafka2.KafkaConsumer, error) {
 	cfg := c.cfg
 	cfg.SetKey("group_id", groupId)
+	cfg.SetKey("bootstrap.servers", strings.Join(c.brokers, ","))
 
 	return newConsumer(ctx, cfg, topics)
 }
 
-func NewClient() *confluentKafkaClient {
+func NewClient(brokers []string) *confluentKafkaClient {
 	defaultConfig := NewConfig()
-	return &confluentKafkaClient{cfg: defaultConfig}
+	return &confluentKafkaClient{
+		cfg:     defaultConfig,
+		brokers: brokers,
+	}
 }
 
 func NewConfig() *kafka.ConfigMap {
