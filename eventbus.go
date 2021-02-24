@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Shopify/sarama"
 	"github.com/google/uuid"
 	eh "github.com/looplab/eventhorizon"
 	"github.com/pkg/errors"
@@ -241,9 +242,22 @@ func (b *EventBus) handle(ctx context.Context, groupID string, topics []string, 
 			err := c.Receive(ctx, handler)
 			if err != nil {
 				if err == context.Canceled {
+					Logger.Log("groupID", groupID, "msg", "context canceled")
 					return
 				}
+
+				if err == sarama.ErrClosedConsumerGroup || err == sarama.ErrClosedClient {
+					Logger.Log("groupID", groupID, "msg", "context err:")
+					return
+				}
+
 				b.handleError(err)
+			}
+
+			if ctx.Err() != nil {
+				Logger.Log("groupID", groupID, "msg", "context err:", ctx.Err())
+				b.handleError(ctx.Err())
+				return
 			}
 		}
 	}()

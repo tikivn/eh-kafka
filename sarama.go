@@ -120,9 +120,6 @@ func (c *consumer) Receive(ctx context.Context, f HandlerFunc) error {
 	}
 
 	err := c.group.Consume(ctx, c.topics, handler)
-	if err == sarama.ErrClosedConsumerGroup || err == sarama.ErrClosedClient {
-		return nil
-	}
 	return err
 }
 
