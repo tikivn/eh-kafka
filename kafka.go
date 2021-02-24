@@ -26,7 +26,7 @@ type HandlerFunc func(context.Context, ConsumerMessage) error
 
 type KafkaConsumer interface {
 	Errors() <-chan error
-	Receive(context.Context, HandlerFunc) error
+	Receive(context.Context, *consumerGroupHandler) error
 	Wait(time.Duration) error
 	Close() error
 }

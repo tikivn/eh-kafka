@@ -231,6 +231,10 @@ func (b *EventBus) handle(ctx context.Context, groupID string, topics []string, 
 			Logger.Log("groupID", groupID, "msg", "Consumer exited")
 		}()
 
+		cghandler := &consumerGroupHandler{
+			handler: handler,
+		}
+
 		for {
 			select {
 			case <-b.closed:
@@ -238,9 +242,10 @@ func (b *EventBus) handle(ctx context.Context, groupID string, topics []string, 
 			default:
 			}
 
-			err := c.Receive(ctx, handler)
+			err := c.Receive(ctx, cghandler)
 			if err != nil {
 				if err == context.Canceled {
+					c.Close()
 					return
 				}
 				b.handleError(err)

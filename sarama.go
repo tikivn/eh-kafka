@@ -109,16 +109,7 @@ func NewConsumer(ctx context.Context, group sarama.ConsumerGroup, topics []strin
 	}, nil
 }
 
-func (c *consumer) Receive(ctx context.Context, f HandlerFunc) error {
-	handler := &consumerGroupHandler{
-		handler: f,
-		started: func() {
-			c.startedOnce.Do(func() {
-				close(c.started)
-			})
-		},
-	}
-
+func (c *consumer) Receive(ctx context.Context, handler *consumerGroupHandler) error {
 	err := c.group.Consume(ctx, c.topics, handler)
 	if err == sarama.ErrClosedConsumerGroup || err == sarama.ErrClosedClient {
 		return nil
@@ -147,11 +138,11 @@ func (c *consumer) Close() error {
 
 type consumerGroupHandler struct {
 	handler HandlerFunc
-	started func()
+	started chan none
 }
 
 func (c *consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
-	c.started()
+	close(c.started)
 	return nil
 }
 
