@@ -1,7 +1,5 @@
 module github.com/giautm/eh-kafka
 
-go 1.15
-
 require (
 	github.com/DataDog/zstd v1.3.5 // indirect
 	github.com/Shopify/sarama v1.22.0
